@@ -8,8 +8,8 @@ import {
   moveLeft,
   moveRight,
   getMousePosition,
-} from './move_mouse.js';
-import { drawCircle, drawRectangle } from './drawing.js';
+} from './control/move_mouse.js';
+import { drawCircle, drawRectangle } from './control/drawing.js';
 
 const HTTP_PORT = 3000;
 
