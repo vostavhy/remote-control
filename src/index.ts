@@ -9,6 +9,7 @@ import {
   moveRight,
   getMousePosition,
 } from './move_mouse.js';
+import { drawingRectangle } from './drawing.js';
 
 const HTTP_PORT = 3000;
 
@@ -22,33 +23,38 @@ wss.on('connection', (ws: WebSocket) => {
 
   ws.on('message', (data) => {
     console.log(`${data}`);
-    let [action, parameter] = String(data).split(' ');
+    let [action, parameter1, parameter2] = String(data).split(' ');
 
     switch (action) {
       case 'mouse_up':
         console.log('mouse_up');
-        moveUp(Number(parameter));
+        moveUp(Number(parameter1));
         ws.send(`${data}`);
         break;
       case 'mouse_down':
         console.log('mouse_down');
-        moveDown(Number(parameter));
+        moveDown(Number(parameter1));
         ws.send(`${data}`);
         break;
       case 'mouse_left':
         console.log('mouse_left');
-        moveLeft(Number(parameter));
+        moveLeft(Number(parameter1));
         ws.send(`${data}`);
         break;
       case 'mouse_right':
         console.log('mouse_right');
-        moveRight(Number(parameter));
+        moveRight(Number(parameter1));
         ws.send(`${data}`);
         break;
       case 'mouse_position':
         console.log('mouse_position');
         const position = getMousePosition();
         ws.send(`${data} ${position.x},${position.y}`);
+        break;
+      case 'draw_rectangle':
+        console.log('draw_rectangle');
+        drawingRectangle(Number(parameter1), Number(parameter2));
+        ws.send(`${data}`);
         break;
 
       default:
