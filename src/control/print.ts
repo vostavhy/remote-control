@@ -3,28 +3,19 @@ import Jimp from 'jimp';
 import path from 'path';
 
 const getPngBuffer = async () => {
-  const __dirname = path.resolve(path.dirname(''));
-  const img = robot.screen.capture(0, 0, 200, 200);
+  const { x, y } = robot.getMousePos();
+  const bitmap = robot.screen.capture(x - 100, y - 100, 200, 200);
   const data = [];
-  const bitmap = img.image;
-  for (let i = 0; i < bitmap.length; i += 4) {
-    data.push(bitmap[i + 2], bitmap[i + 1], bitmap[i], bitmap[i + 3]);
+  const rawImage = bitmap.image;
+  for (let i = 0; i < rawImage.length; i += 4) {
+    data.push(rawImage[i + 2], rawImage[i + 1], rawImage[i], rawImage[i + 3]);
   }
 
-  const jimp = new Jimp(
-    {
-      data: new Uint8Array(data),
-      width: img.width,
-      height: img.height,
-    },
-    async function (err: Error, image: Jimp) {
-      if (err) {
-        console.log(err);
-      } else {
-        image.write(__dirname + '/data/screen.png');
-      }
-    }
-  );
+  const jimp = new Jimp({
+    data: new Uint8Array(data),
+    width: bitmap.width,
+    height: bitmap.height,
+  });
 
   const base64 = await jimp.getBase64Async(Jimp.MIME_PNG);
   return base64.split(',')[1];

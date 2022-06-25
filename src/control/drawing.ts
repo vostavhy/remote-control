@@ -1,7 +1,5 @@
 import robot from 'robotjs';
 
-//robot.setMouseDelay(2000);
-
 const drawRectangle = (width: number, length: number) => {
   robot.mouseToggle('down');
   slowDrag(width, 0);
