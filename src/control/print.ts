@@ -1,6 +1,5 @@
 import robot from 'robotjs';
 import Jimp from 'jimp';
-import path from 'path';
 
 const getPngBuffer = async () => {
   const { x, y } = robot.getMousePos();
