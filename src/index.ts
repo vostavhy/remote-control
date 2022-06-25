@@ -10,6 +10,7 @@ import {
   getMousePosition,
 } from './control/move_mouse.js';
 import { drawCircle, drawRectangle } from './control/drawing.js';
+import { getPngBuffer } from './control/print.js';
 
 const HTTP_PORT = 3000;
 
@@ -21,7 +22,7 @@ const wss = new WebSocketServer({ port: 8080 });
 wss.on('connection', (ws: WebSocket) => {
   console.log('someone connected!');
 
-  ws.on('message', (data) => {
+  ws.on('message', async (data) => {
     console.log(`${data}`);
     let [action, parameter1, parameter2] = String(data).split(' ');
 
@@ -67,6 +68,12 @@ wss.on('connection', (ws: WebSocket) => {
         console.log('draw_circle');
         drawCircle(Number(parameter1));
         ws.send(`${data}`);
+        break;
+
+      case 'prnt_scrn':
+        console.log('prnt_scrn');
+        const base64 = await getPngBuffer();
+        ws.send(`${data} ${base64}`);
         break;
 
       default:
