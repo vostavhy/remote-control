@@ -9,7 +9,7 @@ import {
   moveRight,
   getMousePosition,
 } from './move_mouse.js';
-import { drawingRectangle } from './drawing.js';
+import { drawCircle, drawRectangle } from './drawing.js';
 
 const HTTP_PORT = 3000;
 
@@ -53,7 +53,19 @@ wss.on('connection', (ws: WebSocket) => {
         break;
       case 'draw_rectangle':
         console.log('draw_rectangle');
-        drawingRectangle(Number(parameter1), Number(parameter2));
+        drawRectangle(Number(parameter1), Number(parameter2));
+        ws.send(`${data}`);
+        break;
+
+      case 'draw_square':
+        console.log('draw_square');
+        drawRectangle(Number(parameter1), Number(parameter1));
+        ws.send(`${data}`);
+        break;
+
+      case 'draw_circle':
+        console.log('draw_circle');
+        drawCircle(Number(parameter1));
         ws.send(`${data}`);
         break;
 
