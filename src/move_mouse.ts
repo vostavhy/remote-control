@@ -5,4 +5,19 @@ const moveUp = (y: number) => {
   robot.moveMouse(position.x, position.y - y);
 };
 
-export { moveUp };
+const moveDown = (y: number) => {
+  const position = robot.getMousePos();
+  robot.moveMouse(position.x, position.y + y);
+};
+
+const moveLeft = (x: number) => {
+  const position = robot.getMousePos();
+  robot.moveMouse(position.x - x, position.y);
+};
+
+const moveRight = (x: number) => {
+  const position = robot.getMousePos();
+  robot.moveMouse(position.x + x, position.y);
+};
+
+export { moveUp, moveDown, moveLeft, moveRight };
