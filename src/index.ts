@@ -2,7 +2,13 @@ import Jimp from 'jimp';
 import { httpServer } from './http_server/index.js';
 import robot from 'robotjs';
 import WebSocket, { WebSocketServer } from 'ws';
-import { moveUp, moveDown, moveLeft, moveRight } from './move_mouse.js';
+import {
+  moveUp,
+  moveDown,
+  moveLeft,
+  moveRight,
+  getMousePosition,
+} from './move_mouse.js';
 
 const HTTP_PORT = 3000;
 
@@ -11,7 +17,7 @@ httpServer.listen(HTTP_PORT);
 
 // server creation
 const wss = new WebSocketServer({ port: 8080 });
-wss.on('connection', (ws) => {
+wss.on('connection', (ws: WebSocket) => {
   console.log('someone connected!');
 
   ws.on('message', (data) => {
@@ -38,6 +44,11 @@ wss.on('connection', (ws) => {
         console.log('mouse_right');
         moveRight(Number(parameter));
         ws.send(`${data}`);
+        break;
+      case 'mouse_position':
+        console.log('mouse_position');
+        const position = getMousePosition();
+        ws.send(`${data} ${position.x},${position.y}`);
         break;
 
       default:

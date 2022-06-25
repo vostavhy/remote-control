@@ -20,4 +20,9 @@ const moveRight = (x: number) => {
   robot.moveMouse(position.x + x, position.y);
 };
 
-export { moveUp, moveDown, moveLeft, moveRight };
+const getMousePosition = () => {
+  const position = robot.getMousePos();
+  return position;
+};
+
+export { moveUp, moveDown, moveLeft, moveRight, getMousePosition };
