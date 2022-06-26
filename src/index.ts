@@ -1,5 +1,5 @@
 import { httpServer } from './http_server/index.js';
-import WebSocket, { WebSocketServer } from 'ws';
+import WebSocket, { createWebSocketStream, WebSocketServer } from 'ws';
 import { moveUp, moveDown, moveLeft, moveRight } from './control/move_mouse.js';
 import { getMousePosition } from './control/mouse_position.js';
 import { drawCircle, drawRectangle } from './control/drawing.js';
@@ -15,53 +15,63 @@ const wss = new WebSocketServer({ port: 8080 });
 wss.on('connection', (ws: WebSocket) => {
   console.log('someone connected!');
 
-  ws.on('message', async (data) => {
-    let [action, parameter1, parameter2] = String(data).split(' ');
+  const duplex = createWebSocketStream(ws, {
+    encoding: 'utf8',
+    decodeStrings: false,
+  });
+
+  duplex.on('data', async (data) => {
+    console.log(data);
+    let [action, parameter1, parameter2] = data.split(' ');
 
     switch (action) {
       case 'mouse_up':
         moveUp(Number(parameter1));
-        ws.send(`${data}`);
+        duplex.write(data);
         break;
       case 'mouse_down':
         moveDown(Number(parameter1));
-        ws.send(`${data}`);
+        duplex.write(data);
         break;
       case 'mouse_left':
         moveLeft(Number(parameter1));
-        ws.send(`${data}`);
+        duplex.write(data);
         break;
       case 'mouse_right':
         moveRight(Number(parameter1));
-        ws.send(`${data}`);
+        duplex.write(data);
         break;
       case 'mouse_position':
         const position = getMousePosition();
-        ws.send(`${data} ${position.x},${position.y}`);
+        duplex.write(`${data} ${position.x},${position.y}`);
         break;
       case 'draw_rectangle':
         drawRectangle(Number(parameter1), Number(parameter2));
-        ws.send(`${data}`);
+        duplex.write(data);
         break;
 
       case 'draw_square':
         drawRectangle(Number(parameter1), Number(parameter1));
-        ws.send(`${data}`);
+        duplex.write(data);
         break;
 
       case 'draw_circle':
         drawCircle(Number(parameter1));
-        ws.send(`${data}`);
+        duplex.write(data);
         break;
 
       case 'prnt_scrn':
         const base64 = await getPngBuffer();
-        ws.send(`${data} ${base64}`);
+        duplex.write(`${data} ${base64}`);
         break;
 
       default:
         break;
     }
+  });
+
+  duplex.on('close', () => {
+    console.log('websocket stream was closed');
   });
 
   ws.on('close', () => {
